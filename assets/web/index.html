@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MiroFish PRO · Simulación de actores con Claude Code</title>
+<link rel="stylesheet" href="assets/styles.css"></head>
+<body>
+<header class="top">
+  <h1>🐟 MiroFish PRO</h1>
+  <p class="lead">No predices lo que harán los demás: lo ensayas, con lo que cada uno sabe, y miras dónde se rompe.</p>
+  <input id="q" type="search" placeholder="Buscar: dossier, actor, ronda, brecha…">
+  <div class="bar"><i id="pb"></i></div><div id="pt" class="lead"></div>
+  <div class="toc" id="toc"></div>
+</header>
+<main id="list"></main>
+<p class="foot">Ensayo, no profecía. Normas solo por su nombre: verificar la norma vigente y el expediente técnico aprobado. Casos ficticios.</p>
+<script src="assets/catalog.js"></script>
+<script src="assets/engine.js"></script>
+<script>
+(function () {
+  var done = Store.done(), total = 0, ok = 0;
+  CATALOG.forEach(function (a) { total += a.lessons.length; a.lessons.forEach(function (l) { if (done[l.id]) ok++; }); });
+  document.getElementById('pb').style.width = (100 * ok / total) + '%';
+  document.getElementById('pt').textContent = ok + ' de ' + total + ' lecciones completadas';
+  var toc = document.getElementById('toc'), list = document.getElementById('list');
+  function render(f) {
+    f = (f || '').toLowerCase(); var h = '';
+    CATALOG.forEach(function (a, ai) {
+      var ls = a.lessons.filter(function (l) { return !f || (l.t + ' ' + l.d + ' ' + a.area).toLowerCase().indexOf(f) >= 0; });
+      if (!ls.length) return;
+      h += '<section class="area acc-' + a.acc + '" id="ar' + ai + '"><h2>' + a.icon + ' ' + a.area + '</h2><p class="d">' + a.desc + '</p>';
+      ls.forEach(function (l) {
+        h += '<a class="les' + (done[l.id] ? ' done' : '') + '" href="lesson.html?l=' + l.id + '"><span class="ic">' + l.icon + '</span><span><div class="t">' + l.t + '</div><div class="dd">' + l.d + '</div></span></a>';
+      });
+      h += '</section>';
+    });
+    list.innerHTML = h || '<p class="lead">Sin resultados.</p>';
+  }
+  toc.innerHTML = CATALOG.map(function (a, i) { return '<a href="#ar' + i + '">' + a.icon + ' ' + (i + 1) + '</a>'; }).join('');
+  render('');
+  document.getElementById('q').oninput = function () { render(this.value); };
+})();
+</script></body></html>

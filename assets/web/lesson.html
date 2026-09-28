@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lección · MiroFish PRO</title>
+<link rel="stylesheet" href="assets/styles.css"></head>
+<body>
+<div id="app"><p class="lead">Cargando…</p></div>
+<script src="assets/catalog.js"></script>
+<script src="assets/engine.js"></script>
+<script>
+(function () {
+  var id = (new URLSearchParams(location.search).get('l') || '').replace(/[^a-z0-9\-]/gi, '');
+  var s = document.createElement('script');
+  s.src = 'lessons/' + id + '.js';
+  s.onerror = function () { document.getElementById('app').innerHTML = '<p>No se encontró la lección. <a href="index.html">Volver</a></p>'; };
+  document.body.appendChild(s);
+})();
+</script></body></html>
