@@ -54,3 +54,6 @@ pre.out{white-space:pre-wrap;word-break:break-word;background:#081428;border:1px
 .pl{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:10px 0}
 details.pl>summary{font-weight:700;cursor:pointer}
 .legend{display:flex;flex-wrap:wrap;gap:10px;font-size:.82rem;margin:4px 0 8px}.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.audiobar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0}
+.audiobar .btn{margin:0}.speed{display:flex;align-items:center;gap:6px;color:var(--mut);flex:1;min-width:150px}.speed input{flex:1}
+.speaking{outline:2px solid var(--coral);box-shadow:0 0 0 4px rgba(255,122,89,.18)}
