@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Plantillas · MiroFish PRO</title>
+<link rel="stylesheet" href="assets/styles.css"></head>
+<body class="acc-a7 tool">
+<div class="crumb"><a href="herramientas.html">← Herramientas</a></div>
+<h1>📄 Plantillas de la simulación</h1>
+<p class="sub">Nueve plantillas del método (tomadas del skill <code>/mirofish</code>). Copia, cambia lo que está entre &lt; &gt; y pega en tu carpeta del caso o en Claude Code. En los prompts escribe siempre la ruta ABSOLUTA.</p>
+<div id="app"></div>
+<p class="foot">Ensayo, no profecía. Normas solo por su nombre: verificar la norma vigente y el expediente técnico aprobado.</p>
+<script src="assets/catalog.js"></script><script src="assets/engine.js"></script><script src="assets/tools.js"></script>
+<script>
+(function () {
+  var P = [
+{ t: 'Dossier común', f: '00_dossier_comun.md', x: [
+'# DOSSIER COMÚN — SIMULACIÓN DE ACTORES, <TEMA CORTO>',
+'Fuente: <documentos de los que sale: informe, carta, cuaderno, resoluciones>. Fecha de la simulación: <dd/mm/aaaa>.',
+'Regla para todos los agentes: no inventes hechos que no estén aquí; si necesitas suponer algo, dilo como supuesto. Las normas se citan por su nombre, nunca por número de artículo o numeral inventado. Usa roles, no nombres de personas.',
+'',
+'## 1. La obra',
+'- Nombre, ubicación. Entidad y quién aprueba qué. Contratista (modalidad, sistema de contratación). Supervisión.',
+'- Marco normativo aplicable al contrato (por su nombre).',
+'- Plazo: inicio, plazo vigente, ampliaciones, término; estado actual.',
+'',
+'## 2. Historia hasta hoy',
+'- Cronología fechada de los documentos que llevan al evento (quién, qué documento, qué dice).',
+'',
+'## 3. El evento que dispara la simulación',
+'- Qué pasa exactamente, con cifras. Plazos que corren.',
+'',
+'## 4. Hechos técnicos relevantes',
+'- Ensayos, protocolos, metrados, avances, observaciones asentadas.',
+'',
+'## 5. Reglas contractuales invocadas (por su nombre)',
+'- Bases, Reglamento, opiniones del organismo supervisor.',
+'',
+'## 6. Puntos débiles conocidos (visibles para quien lea con atención)',
+'- Lo que cualquier actor podría usar contra otro.',
+'',
+'Verificar la norma vigente y el expediente técnico aprobado.'] },
+{ t: 'Perfil privado de un actor', f: 'perfiles/A{k}.md', x: [
+'## A<k> — <NOMBRE DEL ACTOR>: <rol concreto>',
+'Quién eres: <institución o persona colectiva y su función en este caso>.',
+'Lo que quieres: <intereses concretos; lo supuesto, marcado «supuesto»>.',
+'Lo que temes: <riesgos personales e institucionales: control, penalidades, arbitraje, caja, reputación>.',
+'Lo que sabes y otros no: <información privada. Si NO está en los documentos reales, encabeza con «(HIPÓTESIS DE SIMULACIÓN, no verificada en los documentos reales)»>.',
+'Lo que puedes hacer: <palancas reales: cartas, asientos, aprobar/observar, penalizar, requerir, conciliar…>.'] },
+{ t: 'Consigna de la ronda 1', f: 'prompt del subagente', x: [
+'Participas en una simulación de actores de una obra pública peruana. Encarnas UN solo actor y respondes en personaje, con criterio realista de contrataciones del Estado en el Perú.',
+'',
+'Lee SOLO estos dos archivos (no leas ningún otro archivo de la carpeta, en especial otros perfiles ni la carpeta _orquestador: son información privada de otros actores):',
+'1. <RUTA>\\00_dossier_comun.md',
+'2. <RUTA>\\perfiles\\A<k>.md  ← tu perfil',
+'',
+'RONDA 1 — del <fecha> al <fecha>.',
+'Lo que acaba de pasar: <el evento, contado desde lo que ESTE actor recibe o ve>.',
+'',
+'Decide qué haces en este periodo. Reglas: no inventes hechos fuera del dossier y tu perfil; si supones algo, márcalo como «supuesto». Cita normas por su nombre, nunca por número de artículo. Usa roles, no nombres de personas. Sé concreto y realista, sin fabricar documentos.',
+'',
+'Escribe tu respuesta en <RUTA>\\rondas\\R1_A<k>.md con EXACTAMENTE este formato (máximo 450 palabras):',
+'',
+'# R1 — A<k> <NOMBRE>',
+'**Lectura de la situación:** (2-3 frases, desde tu interés)',
+'**Acciones del periodo:** (1 a 3; cada una así)',
+'- [Tipo de acción o documento] → [destinatario] · [contenido esencial] · [base que invocas] · [visibilidad: formal / informal / interna]',
+'**Lo que decides NO hacer y por qué:** (1-2 líneas)',
+'**Lo que esperas que hagan los demás:** (1 línea por cada otro actor)',
+'**Tus números:** <1 a 3 probabilidades propias, redactadas completas> __',
+'**Indicadores:** <clave1>=__ · <clave2>=__   (números 0-100: <qué mide cada clave>)',
+'',
+'Después de escribir el archivo, devuelve como respuesta final el mismo contenido.'] },
+{ t: 'Consigna de la ronda n (n ≥ 2)', f: 'prompt del subagente', x: [
+'Participas en una simulación de actores de una obra pública peruana. Encarnas UN solo actor: A<k> <NOMBRE> (<rol>). Respondes en personaje, con criterio realista de <tipo de actor> en el Perú.',
+'',
+'Lee SOLO estos tres archivos (no leas ningún otro de la carpeta, en especial otros perfiles, otros contextos ni la carpeta _orquestador):',
+'1. <RUTA>\\00_dossier_comun.md',
+'2. <RUTA>\\perfiles\\A<k>.md  ← tu perfil',
+'3. <RUTA>\\rondas\\R<n>_contexto_A<k>.md  ← lo que ha pasado que tú conoces y lo que decidiste antes',
+'',
+'RONDA <n> — del <fecha> al <fecha> (<tema de la ronda>).',
+'En esta ventana: <situación, desde lo que este actor sabe; nunca le cuentes lo que no ve>.',
+'Decisión central: <la decisión concreta que le toca, con 2-4 opciones «por ejemplo…» sin empujar ninguna>. No puedes fabricar documentos.',
+'Define también reglas condicionales para lo que no sabes (<incertidumbres ajenas que le afectan>).',
+'',
+'Reglas: no inventes hechos fuera de tus archivos; si supones algo, márcalo como «supuesto». Cita normas por su nombre, nunca por número de artículo. Usa roles, no nombres de personas. No inventes montos: describe cómo se calcularían.',
+'',
+'Escribe tu respuesta en <RUTA>\\rondas\\R<n>_A<k>.md con EXACTAMENTE este formato (máximo 500 palabras):',
+'',
+'# R<n> — A<k> <NOMBRE>',
+'**Lectura de la situación:** (2-3 frases)',
+'**<Sección de la decisión central>:** (…)',
+'**Otras acciones del periodo:** (0 a 2; [acción] → [destinatario] · [contenido] · [base] · [visibilidad])',
+'**Reglas condicionales:** (2 a 3, formato «Si … → …»)',
+'**Tus números:** <probabilidades propias de esta ronda> __',
+'**Indicadores:** <clave1>=__ · <clave2>=__',
+'',
+'Después de escribir el archivo, devuelve como respuesta final el mismo contenido.',
+'(En la ronda final cambia «Reglas condicionales» por «Desenlace más probable para ti» y pide «Tus números finales».)'] },
+{ t: 'Resolución «vista de dios»', f: '_orquestador/R{n}_resolucion.md', x: [
+'# Resolución R<n> (vista de dios)',
+'',
+'- 29/09 [A1 A2 A3 A4] <quién, qué documento, qué dice, plazos>',
+'- 30/09 [A1 A3] <carta de la Entidad a la supervisión: pide descargo en 3 días hábiles …>',
+'- 03-05/10 [A2 A5] <proveedores al contratista: … (resultado simulado)>',
+'- 05/10 [todos] <hecho público>',
+'> Nota privada del orquestador: (las líneas que empiezan con > no pasan a nadie)',
+'',
+'Cómo resolver: cronológico y con fecha; un hecho por línea; visibilidad realista (carta → destinatario y copias; asiento de cuaderno → quienes lo firman; memorando interno → su autor; control → lo que obra en la Entidad; lo público → todos). Lo de terceros no modelados, decídelo tú y márcalo «(resultado simulado)». Rama de estrés opcional: «RAMA DE ESTRÉS (resultado simulado)».'] },
+{ t: 'Informe de la simulación', f: '_orquestador/informe.md', x: [
+'# SIMULACIÓN DE ESCENARIOS DE ACTORES',
+'<Tema: evento simulado, en una línea>',
+'Obra: <nombre corto> · Entidad: … · Contratista: … · Supervisión: …',
+'Fecha de la simulación: <dd/mm/aaaa> · Horizonte simulado: <desde> – <hasta>',
+'',
+'> **Documento interno de <perspectiva>. No forma parte del expediente ni se remite a la Entidad ni al contratista.**',
+'> Es un ejercicio de anticipación hecho con agentes de inteligencia artificial que encarnan a cada actor con la información que tendría en la realidad. No es una predicción, no es asesoría legal y no anticipa la decisión de la Entidad, de un árbitro ni del control gubernamental. Los resultados de ensayos que aparecen son simulados.',
+'',
+'## 1. Resumen ejecutivo   (pregunta simulada · respuesta corta · hallazgos · qué conviene hacer ya)',
+'## 2. Qué se simuló y cómo   (actores, rondas, supuestos del orquestador)',
+'## 3. Cronología simulada   (fecha · hecho · quién)',
+'## 4. Qué hizo cada actor, ronda por ronda',
+'## 5. Cómo evolucionó la percepción de riesgo   (gráfico de indicadores + lectura de brechas)',
+'## 6. Hallazgos   (convergencias · divergencias · puntos de quiebre · lo que no se vio venir)',
+'## 7. Recomendaciones   (esta semana · dos semanas siguientes · hacia el cierre; con responsable)',
+'## 8. Limitaciones   (dossier dado, supuestos y resultados simulados, probabilidades = juicios declarados, una sola corrida)',
+'',
+'*Las normas se citan por su denominación. Verificar la norma vigente y el expediente técnico aprobado. Este documento no promete resultado alguno de la Entidad, del control ni de un árbitro.*'] },
+{ t: 'Entrevista a un actor', f: 'prompt del subagente', x: [
+'Eres A<k> <NOMBRE> al final de una simulación de actores de obra pública. Sigues en personaje.',
+'Lee SOLO: <RUTA>\\00_dossier_comun.md, <RUTA>\\perfiles\\A<k>.md, y todos tus archivos <RUTA>\\rondas\\R*_A<k>.md y <RUTA>\\rondas\\R*_contexto_A<k>.md. Ningún otro.',
+'',
+'Pregunta del usuario: «<pregunta>»',
+'',
+'Responde en primera persona, desde lo que tu actor sabe (no desde lo que no pudo ver). Si la pregunta pide algo que no sabes, dilo. Cita normas por su nombre. Máximo 350 palabras.',
+'Guarda la respuesta en <RUTA>\\entrevistas\\<aaaammdd>_A<k>_<tema>.md y devuélvela.',
+'',
+'(Para preguntar «al mundo» no hace falta subagente: respóndelo tú con la vista de dios.)'] },
+{ t: 'Actor colectivo (vecinos, prensa, redes)', f: 'perfil + formato de respuesta', x: [
+'Perfil: quiénes son, qué les afecta de la obra (accesos, polvo, ruido, empleo, desvíos), qué canales usan (junta vecinal, redes, radio local, defensoría) y qué pueden hacer.',
+'',
+'Formato de su respuesta (en lugar de «Acciones del periodo»):',
+'**Voces:** (6 a 10, cada una: [perfil corto] · [canal] · «texto breve del post o reclamo»)',
+'**Clima general:** (2 líneas)',
+'**Acciones colectivas probables:** (bloqueo, denuncia, nota de prensa, queja ante defensoría… con su probabilidad)',
+'**Indicadores:** tension_social=__ · …',
+'',
+'En la resolución, los posts públicos son [todos]; una queja formal va a su destinatario.'] },
+{ t: 'Rama «¿y si…?»', f: 'procedimiento', x: [
+'1. Copia la carpeta del caso a <caso>__si_<nombre> con todo hasta la ronda k-1.',
+'2. Cambia el hecho en la resolución R<k-1> (o en el dossier, si cambia el evento inicial) y márcalo.',
+'3. Vuelve a armar los contextos y corre las rondas k… de nuevo.',
+'4. En el informe de la rama, compara con la corrida base: qué cambió en las decisiones y en los indicadores.'] }
+  ];
+  var h = '';
+  P.forEach(function (p, i) {
+    h += '<details class="pl"><summary>' + Tools.esc(p.t) + ' <span class="lead">· ' + Tools.esc(p.f) + '</span></summary><pre class="out">' + Tools.esc(p.x.join('\n')) + '</pre><button class="btn" data-i="' + i + '">Copiar</button></details>';
+  });
+  var app = document.getElementById('app'); app.innerHTML = h;
+  app.querySelectorAll('button[data-i]').forEach(function (b) { b.onclick = function () { Tools.copy(P[+b.getAttribute('data-i')].x.join('\n'), b); }; });
+})();
+</script></body></html>

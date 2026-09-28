@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Graficador de indicadores · MiroFish PRO</title>
+<link rel="stylesheet" href="assets/styles.css"></head>
+<body class="acc-a8 tool">
+<div class="crumb"><a href="herramientas.html">← Herramientas</a></div>
+<h1>📊 Graficador de indicadores</h1>
+<p class="sub">Pega las respuestas de los actores (con su cabecera <code># R1 — A1 NOMBRE</code> y la línea <code>**Indicadores:** clave=55 · otra=20</code>). Dibuja la evolución por actor y ronda y resalta la mayor brecha de percepción.</p>
+<div class="card tool"><label>Respuestas pegadas (de todas las rondas y actores)</label>
+<textarea id="txt" style="min-height:170px" placeholder="# R1 — A1 ENTIDAD&#10;...&#10;**Indicadores:** controversia=55 · paralizacion=20"></textarea>
+<label>Nombres de los actores (opcional, uno por línea: <code>A1 Entidad</code>)</label><textarea id="nom" style="min-height:70px"></textarea>
+<button class="btn sec" id="ej">Cargar ejemplo ficticio</button></div>
+<div id="avisos"></div><div id="graf"></div>
+<div class="card"><h2>Cómo leerlo</h2><ul>
+<li>Son <b>juicios declarados</b> por cada agente en cada ronda, no frecuencias medidas: la forma de la curva importa más que el valor exacto.</li>
+<li>La línea coral discontinua marca la mayor <b>brecha de percepción</b> entre actores (desde 20 puntos): lo que uno cree de su riesgo frente a lo que creen los demás.</li>
+<li>Una corrida no es una distribución: repite o abre una rama antes de sacar conclusiones.</li></ul></div>
+<p class="foot">Ensayo, no profecía. Datos del ejemplo: ficticios.</p>
+<script src="assets/catalog.js"></script><script src="assets/engine.js"></script><script src="assets/tools.js"></script>
+<script>
+(function () {
+  function $(i) { return document.getElementById(i); }
+  var EJ = '# R1 — A1 ENTIDAD\n**Indicadores:** controversia=40 · paralizacion=15\n# R1 — A2 CONTRATISTA\n**Indicadores:** controversia=60 · paralizacion=25\n# R1 — A3 SUPERVISION\n**Indicadores:** controversia=45 · paralizacion=15\n# R2 — A1 ENTIDAD\n**Indicadores:** controversia=45 · paralizacion=20\n# R2 — A2 CONTRATISTA\n**Indicadores:** controversia=75 · paralizacion=45\n# R2 — A3 SUPERVISION\n**Indicadores:** controversia=50 · paralizacion=20\n# R3 — A1 ENTIDAD\n**Indicadores:** controversia=35 · paralizacion=15\n# R3 — A2 CONTRATISTA\n**Indicadores:** controversia=70 · paralizacion=50\n# R3 — A3 SUPERVISION\n**Indicadores:** controversia=40 · paralizacion=25\n';
+  var EJN = 'A1 Entidad\nA2 Contratista\nA3 Supervisión';
+  function draw() {
+    Store.set('ind', { t: $('txt').value, n: $('nom').value });
+    var r = Calc.indicadores($('txt').value), av = '';
+    if (r.sinLinea.length) av += '<div class="warn">⚠ Sin línea de indicadores: ' + Tools.esc(r.sinLinea.join(', ')) + '</div>';
+    $('avisos').innerHTML = av;
+    if (!r.filas.length) { $('graf').innerHTML = '<p class="lead">Pega respuestas con línea de indicadores para ver el gráfico.</p>'; return; }
+    var nombres = {}; Calc.actores($('nom').value).forEach(function (a) { nombres[a.id] = a.nombre; });
+    var s = Calc.series(r.filas), h = '<div class="legend">';
+    s.actores.forEach(function (a, i) { h += '<span><i style="background:' + Calc.PALETA[i % Calc.PALETA.length] + '"></i>' + Tools.esc(nombres[a] || a) + '</span>'; });
+    h += '</div>';
+    s.claves.forEach(function (c) {
+      var b = Calc.brecha(s, c);
+      h += '<div class="card"><h2>' + Tools.esc(c.replace(/_/g, ' ')) + '</h2>' + Calc.svg(s, c, nombres);
+      h += b && b.d >= 20 ? '<div class="warn">Mayor brecha: ronda ' + b.ronda + ', ' + Tools.esc(nombres[b.hi.a] || b.hi.a) + ' (' + b.hi.v + ') frente a ' + Tools.esc(nombres[b.lo.a] || b.lo.a) + ' (' + b.lo.v + '): ' + b.d + ' puntos.</div>' : '<div class="good">Sin brechas grandes entre actores.</div>';
+      h += '</div>';
+    });
+    $('graf').innerHTML = h;
+  }
+  var g = Store.get('ind', null); if (g) { $('txt').value = g.t || ''; $('nom').value = g.n || ''; }
+  $('txt').addEventListener('input', draw); $('nom').addEventListener('input', draw);
+  $('ej').onclick = function () { $('txt').value = EJ; $('nom').value = EJN; draw(); };
+  draw();
+})();
+</script></body></html>

@@ -35,3 +35,22 @@ header.top{padding:6px 0}
 .foot{color:var(--mut);font-size:.8rem;margin-top:26px;text-align:center}
 .acc-a1{--acc:var(--a1)}.acc-a2{--acc:var(--a2)}.acc-a3{--acc:var(--a3)}.acc-a4{--acc:var(--a4)}.acc-a5{--acc:var(--a5)}.acc-a6{--acc:var(--a6)}.acc-a7{--acc:var(--a7)}
 .acc-a8{--acc:var(--a8)}.acc-a9{--acc:var(--a9)}.acc-a10{--acc:var(--a10)}.acc-a11{--acc:var(--a11)}.acc-a12{--acc:var(--a12)}.acc-a13{--acc:var(--a13)}.acc-a14{--acc:var(--a14)}
+/* Herramientas */
+.tool label{display:block;font-size:.85rem;color:var(--mut);margin:10px 0 3px}
+.tool input[type=text],.tool input[type=number],.tool textarea,.tool select{width:100%;padding:9px 10px;border-radius:8px;border:1px solid var(--line);background:#0e2242;color:var(--ink);font:inherit}
+.tool textarea{min-height:84px;resize:vertical}
+.tool .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{display:inline-block;background:var(--coral);color:#1a0d08;border:0;border-radius:20px;padding:9px 16px;font:inherit;font-weight:700;margin:8px 6px 0 0}
+.btn.sec{background:#0e2242;color:var(--ink);border:1px solid var(--line)}
+pre.out{white-space:pre-wrap;word-break:break-word;background:#081428;border:1px solid var(--line);border-radius:10px;padding:10px;font:.82rem/1.45 ui-monospace,Consolas,monospace;max-height:420px;overflow:auto}
+.warn{background:rgba(242,177,52,.14);border-left:4px solid #f2b134;padding:7px 10px;border-radius:8px;margin:6px 0;font-size:.9rem}
+.good{background:rgba(47,191,113,.14);border-left:4px solid #2fbf71;padding:7px 10px;border-radius:8px;margin:6px 0;font-size:.9rem}
+.tools-grid a.les .t{font-size:1.02rem}
+.hecho{background:#0e2242;border:1px solid var(--line);border-radius:10px;padding:8px;margin:8px 0}
+.chk{display:flex;gap:10px;align-items:flex-start;padding:8px 4px;border-bottom:1px solid var(--line)}
+.chk input{margin-top:5px;transform:scale(1.25)}.chk.on span{color:#9be3b6;text-decoration:line-through}
+.vis{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;font-size:.85rem}.vis label{margin:0;color:var(--ink);display:flex;gap:4px;align-items:center}
+.term{padding:8px 0;border-bottom:1px solid var(--line)}.term b{color:var(--coral)}
+.pl{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:10px 0}
+details.pl>summary{font-weight:700;cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:.82rem;margin:4px 0 8px}.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-1px}

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Glosario · MiroFish PRO</title>
+<link rel="stylesheet" href="assets/styles.css"></head>
+<body class="acc-a9 tool">
+<div class="crumb"><a href="herramientas.html">← Herramientas</a></div>
+<h1>📖 Glosario</h1>
+<p class="sub">Términos del método de simulación de actores. Los datos técnicos de MiroFish, OASIS, CAMEL, Zep y Claude Code cambian rápido: verificar en la documentación vigente.</p>
+<input id="q" type="search" placeholder="Buscar término…" style="width:100%;padding:11px 14px;border-radius:24px;border:1px solid var(--line);background:#0e2242;color:var(--ink);font:inherit">
+<div id="app"></div>
+<p class="foot">Ensayo, no profecía. Normas solo por su nombre: verificar la norma vigente y el expediente técnico aprobado.</p>
+<script src="assets/catalog.js"></script><script src="assets/engine.js"></script><script src="assets/tools.js"></script>
+<script>
+(function () {
+  var G = [
+['Acción incompatible', 'Dos decisiones de actores que no pueden cumplirse a la vez; el orquestador decide cuál prevalece según quién tiene la competencia.'],
+['Actor', 'Parte con intereses propios que se simula con un subagente: Entidad, contratista, supervisión, control, proveedores, vecinos…'],
+['Actor colectivo', 'Un solo agente que da voz a una multitud (vecinos, trabajadores, prensa y redes): voces, clima y acciones colectivas.'],
+['Agente', 'Programa basado en un modelo de lenguaje que decide y actúa con un perfil y una memoria propios.'],
+['Anclas', 'Hechos con fuente que sostienen cada afirmación del dossier y evitan que el actor invente.'],
+['Asimetría de información', 'Diferencia entre lo que sabe un actor y lo que saben los demás; es el motor de la simulación.'],
+['Aislamiento', 'Regla de que cada actor lee solo sus archivos; protege la información privada de los otros.'],
+['Brecha de percepción', 'Distancia entre lo que un actor cree de su propio riesgo y lo que creen los demás. Suele ser el hallazgo más valioso.'],
+['CAMEL', 'Proyecto de agentes multiagente del que, según su documentación, depende OASIS (verificar en la documentación vigente).'],
+['Caso (caso.json)', 'Archivo con los actores, los indicadores y el plan de rondas de una corrida.'],
+['Consigna', 'Instrucción de una ronda para un actor: archivos permitidos, ventana de fechas, situación, decisión central, formato y archivo de salida.'],
+['Contexto', 'Archivo R{n}_contexto_A{k}.md con lo que un actor conoce de rondas anteriores y sus novedades; nunca lo que no ve.'],
+['Contexto aislado', 'Cada subagente trabaja con su propio contexto, sin ver el de los demás.'],
+['Contrastar', 'Comparar lo que predijo cada actor con lo que ocurrió realmente, para aprender de tus corridas.'],
+['Convergencia', 'Lo que todos los actores vieron venir.'],
+['Corrida', 'Una ejecución completa de la simulación (todas las rondas). Una corrida no es una distribución.'],
+['Divergencia', 'Lo que solo un actor vio o valoró de forma distinta.'],
+['Documento interno', 'El informe de simulación: de trabajo, no se remite a la Entidad ni al contratista.'],
+['Dossier común', 'Documento que leen todos los actores: obra, historia, evento, hechos técnicos, reglas y puntos débiles visibles.'],
+['Emergencia', 'Comportamiento del conjunto que no estaba escrito en ningún agente por separado.'],
+['Ensayo, no profecía', 'Principio del curso: se ensaya cómo reaccionan las partes, no se predice el futuro.'],
+['Entrevista', 'Preguntar a un actor, en personaje, después de la simulación, solo con lo que conoció.'],
+['Enjambre (inteligencia de)', 'Muchos agentes simples o ricos que interactúan; el conjunto produce resultados que uno solo no daría.'],
+['Evento disparador', 'El hecho concreto e inyectable con el que empieza la simulación.'],
+['Hecho con fuente', 'Cifra o afirmación del dossier con su documento de origen.'],
+['Hipótesis de simulación', 'Dato no verificado en los documentos reales que se agrega para el ensayo; siempre se marca.'],
+['Indicador', 'Número 0-100 que cada actor declara por ronda con una clave fija (por ejemplo, probabilidad de controversia).'],
+['Interacción profunda', 'Paso final de MiroFish: conversar con agentes o con el informe del mundo simulado.'],
+['GraphRAG', 'Técnica que arma un grafo de conocimiento a partir de los materiales semilla (verificar cómo lo usa MiroFish en su documentación vigente).'],
+['Juicio declarado', 'Probabilidad que el agente escribe como su opinión; no es una frecuencia medida.'],
+['Línea de indicadores', 'Última línea de cada respuesta: **Indicadores:** clave=valor · clave=valor.'],
+['MiroFish', 'Motor de código abierto de simulación multiagente: semilla + pregunta → mundo paralelo + informe (verificar en la documentación vigente).'],
+['Memoria del mundo', 'Los archivos en disco (dossier, perfiles, rondas, contextos) que hacen de estado y de memoria entre sesiones.'],
+['Nada fabricado', 'Regla: ningún actor inventa documentos, ensayos ni decisiones de terceros; lo que se simula va marcado.'],
+['OASIS', 'Simulador social con agentes de CAMEL-AI que usa MiroFish (verificar en la documentación vigente).'],
+['Orquestador', 'Quien arma el mundo, decide qué pasa entre rondas y responde por el informe; aquí, tú y la sesión principal de Claude Code.'],
+['Palancas', 'Lo que un actor puede hacer de verdad: cartas, asientos, aprobar, observar, penalizar, requerir…'],
+['Paralelo', 'Lanzar todos los actores de una ronda en un mismo mensaje para que corran a la vez.'],
+['Perfil', 'Ficha privada de un actor: quién es, qué quiere, qué teme, qué sabe que otros no y qué puede hacer.'],
+['Persona', 'En MiroFish, el perfil generado de cada agente; aquí lo escribes tú en el perfil.'],
+['Punto de quiebre', 'Decisión o hecho a partir del cual el caso cambió de rumbo.'],
+['Rama «¿y si…?»', 'Copia de la corrida desde una ronda cambiando un hecho, para comparar con la corrida base.'],
+['Rama de estrés', 'Resultado adverso plausible que se inyecta para ver dónde se rompe el sistema (marcado como simulado).'],
+['Reglas condicionales', '«Si … → …»: el actor decide ante lo que no sabe y ahorra rondas.'],
+['Resolución', 'Escrito del orquestador tras cada ronda: hechos fechados con etiqueta de quién los ve.'],
+['Resultado simulado', 'Etiqueta obligatoria para ensayos, decisiones de terceros o clima decididos por el orquestador.'],
+['Ronda', 'Ventana de tiempo en la que cada actor decide una vez; luego el orquestador resuelve.'],
+['Semilla', 'Material real (informes, cartas, cuaderno) del que sale el dossier de la simulación.'],
+['Sesgo complaciente', 'Tendencia de los modelos a hacer actores demasiado razonables; se corrige pidiendo estrategia realista sin caricatura.'],
+['Skill', 'Paquete de instrucciones que Claude Code carga para una tarea; aquí /mirofish empaqueta el método.'],
+['Subagente', 'Instancia de Claude Code lanzada por la sesión principal con su propio contexto; cada actor es uno.'],
+['Supuesto', 'Cosa que un actor da por cierta sin que esté en sus archivos; debe declararlo como «supuesto».'],
+['Vista de dios', 'La visión completa del orquestador, que ve todo y decide quién se entera de qué.'],
+['Visibilidad', 'Etiqueta [A1 A3] de cada hecho: qué actores llegan a saberlo.'],
+['Zep', 'Servicio de memoria para agentes que usa MiroFish en la nube (verificar en la documentación vigente).']
+  ];
+  G.sort(function (a, b) { return a[0].localeCompare(b[0], 'es'); });
+  function draw(f) {
+    f = (f || '').toLowerCase();
+    var l = G.filter(function (g) { return !f || (g[0] + ' ' + g[1]).toLowerCase().indexOf(f) >= 0; });
+    document.getElementById('app').innerHTML = l.map(function (g) { return '<div class="term"><b>' + Tools.esc(g[0]) + '</b><br>' + Tools.esc(g[1]) + '</div>'; }).join('') || '<p class="lead">Sin resultados.</p>';
+  }
+  document.getElementById('q').oninput = function () { draw(this.value); };
+  draw('');
+})();
+</script></body></html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Armador de perfiles · MiroFish PRO</title>
+<link rel="stylesheet" href="assets/styles.css"></head>
+<body class="acc-a4 tool">
+<div class="crumb"><a href="herramientas.html">← Herramientas</a></div>
+<h1>🎭 Armador de perfiles</h1>
+<p class="sub">Los cinco campos del perfil de un actor. Avisa si falta la información privada o si algo quedó sin marcar como hipótesis. Copia el Markdown listo para <code>perfiles/A{k}.md</code>.</p>
+<div class="card">
+  <div class="row"><div><label>Id del actor</label><input type="text" id="id" value="A1"></div>
+  <div><label>Nombre del actor</label><input type="text" id="nombre" placeholder="Ej.: Entidad"></div></div>
+  <label>Rol concreto</label><input type="text" id="rol" placeholder="Ej.: Gerencia de Proyectos y coordinación de obra">
+  <label>Quién eres (institución y función en este caso)</label><textarea id="quien"></textarea>
+  <label>Lo que quieres (intereses concretos; lo supuesto, márcalo «supuesto»)</label><textarea id="quieres"></textarea>
+  <label>Lo que temes (control, penalidades, arbitraje, caja, reputación)</label><textarea id="temes"></textarea>
+  <label>Lo que sabes y otros no (el motor de la simulación)</label><textarea id="sabes"></textarea>
+  <label style="display:flex;gap:8px;align-items:flex-start;color:var(--ink)"><input type="checkbox" id="hip" style="width:auto;margin-top:4px"> Esa información NO está en los documentos reales (hipótesis de simulación)</label>
+  <label>Lo que puedes hacer (palancas reales: cartas, asientos, aprobar/observar, penalizar, requerir…)</label><textarea id="puedes"></textarea>
+</div>
+<div id="avisos"></div>
+<button class="btn" id="copiar">Copiar Markdown</button><button class="btn sec" id="limpiar">Limpiar</button>
+<h2 class="blk">Vista previa</h2>
+<pre class="out" id="out"></pre>
+<p class="foot">Usa roles, no nombres de personas. Normas solo por su nombre: verificar la norma vigente y el expediente técnico aprobado.</p>
+<script src="assets/catalog.js"></script><script src="assets/engine.js"></script><script src="assets/tools.js"></script>
+<script>
+(function () {
+  var F = ['id', 'nombre', 'rol', 'quien', 'quieres', 'temes', 'sabes', 'puedes'];
+  function $(i) { return document.getElementById(i); }
+  function val() {
+    var p = { hipotesis: $('hip').checked };
+    F.forEach(function (k) { p[k] = $(k).value; });
+    return p;
+  }
+  function draw() {
+    var p = val(); Store.set('perfil', p);
+    var av = Calc.avisosPerfil(p);
+    $('avisos').innerHTML = av.length ? av.map(function (a) { return '<div class="warn">⚠ ' + Tools.esc(a) + '</div>'; }).join('') : '<div class="good">✓ Perfil completo. Revisa que la información privada sea de verdad asimétrica.</div>';
+    $('out').textContent = Calc.perfilMd(p);
+  }
+  var g = Store.get('perfil', null);
+  if (g) { F.forEach(function (k) { if (g[k] != null) $(k).value = g[k]; }); $('hip').checked = !!g.hipotesis; }
+  document.querySelectorAll('input,textarea').forEach(function (e) { e.addEventListener('input', draw); e.addEventListener('change', draw); });
+  $('copiar').onclick = function () { Tools.copy(Calc.perfilMd(val()), this); };
+  $('limpiar').onclick = function () { if (confirm('¿Borrar el perfil?')) { F.forEach(function (k) { $(k).value = k === 'id' ? 'A1' : ''; }); $('hip').checked = false; draw(); } };
+  draw();
+})();
+</script></body></html>

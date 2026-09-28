@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Generador de consignas · MiroFish PRO</title>
+<link rel="stylesheet" href="assets/styles.css"></head>
+<body class="acc-a5 tool">
+<div class="crumb"><a href="herramientas.html">← Herramientas</a></div>
+<h1>✍️ Generador de consignas</h1>
+<p class="sub">Arma el prompt completo de una ronda para un actor, con los bloques fijos (archivos permitidos, aislamiento, reglas y línea de indicadores). Pégalo en Claude Code.</p>
+<div class="card">
+  <label>Ruta ABSOLUTA de la carpeta del caso</label><input type="text" id="ruta" placeholder="D:\MiroFish\simulaciones\mi_caso">
+  <div class="row"><div><label>Id del actor</label><input type="text" id="actor" value="A1"></div><div><label>Nombre</label><input type="text" id="nombre" placeholder="Entidad"></div></div>
+  <div class="row"><div><label>Rol</label><input type="text" id="rol"></div><div><label>Tipo de actor real</label><input type="text" id="tipo" placeholder="contratista peruano"></div></div>
+  <div class="row"><div><label>Ronda</label><input type="number" id="ronda" value="1" min="1"></div><div><label>Máx. de palabras</label><input type="number" id="max" placeholder="450 / 500"></div></div>
+  <div class="row"><div><label>Desde</label><input type="text" id="desde" placeholder="29/09"></div><div><label>Hasta</label><input type="text" id="hasta" placeholder="05/10"></div></div>
+  <label>Tema de la ronda</label><input type="text" id="tema">
+  <label>Situación (desde lo que ESTE actor recibe o ve)</label><textarea id="situacion"></textarea>
+  <label>Decisión central (concreta; en la ronda 1 puede quedar vacía)</label><textarea id="decision" placeholder="Ej.: Qué entregas y qué pides el día 12"></textarea>
+  <label>Opciones «por ejemplo…» (una por línea, sin empujar ninguna)</label><textarea id="opciones"></textarea>
+  <label>Incertidumbres ajenas para reglas condicionales</label><input type="text" id="incertidumbres" placeholder="qué hará el control, resultado del ensayo…">
+  <label>Secciones del formato (una por línea; la primera es la sección de la decisión)</label><textarea id="secciones" placeholder="Decisión central"></textarea>
+  <label>Indicadores (una línea por clave: <code>clave: qué mide</code>)</label><textarea id="indicadores" placeholder="controversia: probabilidad de controversia formal&#10;paralizacion: probabilidad de paralización"></textarea>
+  <label style="display:flex;gap:8px;align-items:flex-start;color:var(--ink)"><input type="checkbox" id="final" style="width:auto;margin-top:4px"> Es la ronda final (desenlace más probable y números finales)</label>
+</div>
+<div id="avisos"></div>
+<button class="btn" id="copiar">Copiar consigna</button>
+<h2 class="blk">Consigna</h2>
+<pre class="out" id="out"></pre>
+<p class="foot">Los indicadores llevan las mismas claves en todas las rondas y actores: de ahí sale el gráfico. Las probabilidades son juicios declarados, no frecuencias.</p>
+<script src="assets/catalog.js"></script><script src="assets/engine.js"></script><script src="assets/tools.js"></script>
+<script>
+(function () {
+  var F = ['ruta', 'actor', 'nombre', 'rol', 'tipo', 'ronda', 'max', 'desde', 'hasta', 'tema', 'situacion', 'decision', 'opciones', 'incertidumbres', 'secciones', 'indicadores'];
+  function $(i) { return document.getElementById(i); }
+  function val() { var c = { final: $('final').checked }; F.forEach(function (k) { c[k] = $(k).value; }); return c; }
+  function draw() {
+    var c = val(); Store.set('consigna', c);
+    var av = Calc.avisosConsigna(c);
+    $('avisos').innerHTML = av.length ? av.map(function (a) { return '<div class="warn">⚠ ' + Tools.esc(a) + '</div>'; }).join('') : '<div class="good">✓ Sin avisos.</div>';
+    $('out').textContent = Calc.consigna(c);
+  }
+  var g = Store.get('consigna', null);
+  if (g) { F.forEach(function (k) { if (g[k] != null) $(k).value = g[k]; }); $('final').checked = !!g.final; }
+  document.querySelectorAll('input,textarea').forEach(function (e) { e.addEventListener('input', draw); e.addEventListener('change', draw); });
+  $('copiar').onclick = function () { Tools.copy(Calc.consigna(val()), this); };
+  draw();
+})();
+</script></body></html>

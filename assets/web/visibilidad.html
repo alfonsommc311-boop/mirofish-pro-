@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tablero de visibilidad · MiroFish PRO</title>
+<link rel="stylesheet" href="assets/styles.css"></head>
+<body class="acc-a6 tool">
+<div class="crumb"><a href="herramientas.html">← Herramientas</a></div>
+<h1>⚖️ Tablero de visibilidad</h1>
+<p class="sub">Escribe los hechos de la resolución «vista de dios» y marca quién ve cada uno. Genera las líneas <code>- fecha [A1 A3] hecho</code> y muestra lo que sabrá cada actor en la ronda siguiente (misma lógica que <code>armar_contextos.py</code>).</p>
+
+<div class="card"><h2>1. Actores</h2>
+<label>Uno por línea: <code>A1 Entidad</code> (si omites el id se numera solo)</label>
+<textarea id="actores" placeholder="A1 Entidad&#10;A2 Contratista&#10;A3 Supervisión&#10;A4 Control&#10;A5 Proveedores"></textarea></div>
+
+<div class="card"><h2>2. Agregar un hecho</h2>
+<div class="row"><div><label>Fecha</label><input type="text" id="fecha" placeholder="30/09"></div><div><label>Ronda</label><input type="number" id="rn" value="1" min="1"></div></div>
+<label>Hecho (quién, qué documento, qué dice, plazos; lo simulado márcalo «(resultado simulado)»)</label><textarea id="texto"></textarea>
+<label>¿Quién lo ve?</label><div class="vis" id="vis"></div>
+<button class="btn sec" id="todos">Todos</button><button class="btn" id="agregar">Agregar a la resolución</button></div>
+
+<div class="card"><h2>3. Resolución</h2>
+<label>Una línea por hecho; cabecera <code>## R2</code> para separar rondas; las líneas que empiezan con <code>&gt;</code> son notas privadas y no pasan a nadie</label>
+<textarea id="res" style="min-height:190px" placeholder="## R1&#10;- 29/09 [A1 A2] Carta de …"></textarea>
+<button class="btn sec" id="copiares">Copiar resolución</button></div>
+
+<div class="card"><h2>4. Lo que sabe cada actor</h2>
+<label>Contextos tras la ronda</label><select id="n"></select>
+<div id="err"></div><div id="ctx"></div></div>
+<p class="foot">Regla: carta → destinatario y copias; asiento de cuaderno → quienes lo firman; memorando interno → solo su autor; lo público → todos. Nada de esto se manda a la Entidad: es de trabajo.</p>
+<script src="assets/catalog.js"></script><script src="assets/engine.js"></script><script src="assets/tools.js"></script>
+<script>
+(function () {
+  function $(i) { return document.getElementById(i); }
+  var checks = {};
+  function actores() { return Calc.actores($('actores').value); }
+  function drawVis() {
+    var a = actores();
+    $('vis').innerHTML = a.map(function (x) {
+      return '<label><input type="checkbox" data-id="' + x.id + '"' + (checks[x.id] ? ' checked' : '') + '> ' + Tools.esc(x.id + ' ' + x.nombre) + '</label>';
+    }).join('') || '<span class="lead">Escribe primero los actores.</span>';
+    $('vis').querySelectorAll('input').forEach(function (c) { c.onchange = function () { checks[c.getAttribute('data-id')] = c.checked; }; });
+  }
+  function calc() {
+    var a = actores(), ids = a.map(function (x) { return x.id; });
+    var r = Calc.leerResoluciones($('res').value, ids);
+    var sel = $('n'), prev = sel.value;
+    sel.innerHTML = r.orden.map(function (o) { return '<option value="' + o + '">' + o + '</option>'; }).join('');
+    if (r.orden.indexOf(+prev) >= 0) sel.value = prev; else if (r.orden.length) sel.value = r.orden[r.orden.length - 1];
+    var n = parseInt(sel.value, 10);
+    $('err').innerHTML = r.errores.map(function (e) { return '<div class="warn">⚠ ' + Tools.esc(e) + '</div>'; }).join('');
+    if (!r.orden.length) { $('ctx').innerHTML = '<p class="lead">Aún no hay hechos.</p>'; return; }
+    var h = '';
+    var of = Calc.ocultos(r.rondas, n, ids);
+    if (of.length) h += '<div class="warn">⚠ ' + of.length + ' hecho(s) de la ronda ' + n + ' no los ve ningún actor. Revisa la visibilidad.</div>';
+    a.forEach(function (x, i) {
+      var c = Calc.contexto(r.rondas, n, x.id, x.nombre);
+      h += '<details class="pl"' + (i === 0 ? ' open' : '') + '><summary>' + Tools.esc(x.id + ' ' + x.nombre) + ' — antes ' + c.antes + ' · nuevos ' + c.nuevos + (c.nuevos ? '' : ' ⚠ sin novedades') + '</summary><pre class="out">' + Tools.esc(c.texto) + '</pre><button class="btn sec" data-i="' + i + '">Copiar</button></details>';
+    });
+    $('ctx').innerHTML = h;
+    $('ctx').querySelectorAll('button[data-i]').forEach(function (b) {
+      b.onclick = function () { var x = a[+b.getAttribute('data-i')]; Tools.copy(Calc.contexto(r.rondas, n, x.id, x.nombre).texto, b); };
+    });
+  }
+  function save() { Store.set('vis', { a: $('actores').value, r: $('res').value }); calc(); }
+  var g = Store.get('vis', null);
+  if (g) { $('actores').value = g.a || ''; $('res').value = g.r || ''; }
+  $('actores').addEventListener('input', function () { drawVis(); save(); });
+  $('res').addEventListener('input', save);
+  $('n').onchange = calc;
+  $('todos').onclick = function () { actores().forEach(function (x) { checks[x.id] = true; }); drawVis(); };
+  $('agregar').onclick = function () {
+    var ids = actores().map(function (x) { return x.id; });
+    var vis = ids.filter(function (i) { return checks[i]; });
+    var t = $('texto').value.trim(); if (!t) return;
+    var linea = Calc.lineas([{ fecha: $('fecha').value, texto: t, vis: vis }], ids);
+    var cab = '## R' + (parseInt($('rn').value, 10) || 1), res = $('res').value.replace(/\s+$/, '');
+    var re = new RegExp('^##\\s*R' + (parseInt($('rn').value, 10) || 1) + '\\s*$', 'm');
+    if (!re.test(res)) res += (res ? '\n\n' : '') + cab;
+    // inserta al final de esa ronda (antes de la siguiente cabecera, si existe)
+    var partes = res.split('\n'), pos = -1, fin = partes.length;
+    partes.forEach(function (l, i) { if (re.test(l)) pos = i; });
+    for (var j = pos + 1; j < partes.length; j++) if (/^#{1,3}\s.*\bR\d+/i.test(partes[j])) { fin = j; break; }
+    while (fin > pos + 1 && !partes[fin - 1].trim()) fin--;
+    partes.splice(fin, 0, linea);
+    $('res').value = partes.join('\n');
+    $('texto').value = ''; checks = {}; drawVis(); save();
+  };
+  $('copiares').onclick = function () { Tools.copy($('res').value, this); };
+  drawVis(); calc();
+})();
+</script></body></html>
