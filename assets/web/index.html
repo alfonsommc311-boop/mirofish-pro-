@@ -1,43 +1,124 @@
-<!doctype html>
-<html lang="es"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>MiroFish PRO · Simulación de actores con Claude Code</title>
-<link rel="stylesheet" href="assets/styles.css"></head>
+<meta name="theme-color" content="#0b1a2e">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
 <body>
-<header class="top">
-  <h1>🐟 MiroFish PRO</h1>
-  <p class="lead">No predices lo que harán los demás: lo ensayas, con lo que cada uno sabe, y miras dónde se rompe.</p>
-  <input id="q" type="search" placeholder="Buscar: dossier, actor, ronda, brecha…">
-  <div class="bar"><i id="pb"></i></div><div id="pt" class="lead"></div>
-  <p><a class="les" href="herramientas.html"><span class="ic">🧰</span><span><div class="t">Herramientas</div><div class="dd">Perfiles, consignas, visibilidad, indicadores, checklists, plantillas y glosario.</div></span></a></p>
-  <div class="toc" id="toc"></div>
-</header>
-<main id="list"></main>
-<p class="foot">Ensayo, no profecía. Normas solo por su nombre: verificar la norma vigente y el expediente técnico aprobado. Casos ficticios.</p>
-<script src="assets/catalog.js"></script>
-<script src="assets/engine.js"></script>
-<script>
-(function () {
-  var done = Store.done(), total = 0, ok = 0;
-  CATALOG.forEach(function (a) { total += a.lessons.length; a.lessons.forEach(function (l) { if (done[l.id]) ok++; }); });
-  document.getElementById('pb').style.width = (100 * ok / total) + '%';
-  document.getElementById('pt').textContent = ok + ' de ' + total + ' lecciones completadas';
-  var toc = document.getElementById('toc'), list = document.getElementById('list');
-  function render(f) {
-    f = (f || '').toLowerCase(); var h = '';
-    CATALOG.forEach(function (a, ai) {
-      var ls = a.lessons.filter(function (l) { return !f || (l.t + ' ' + l.d + ' ' + a.area).toLowerCase().indexOf(f) >= 0; });
-      if (!ls.length) return;
-      h += '<section class="area acc-' + a.acc + '" id="ar' + ai + '"><h2>' + a.icon + ' ' + a.area + '</h2><p class="d">' + a.desc + '</p>';
-      ls.forEach(function (l) {
-        h += '<a class="les' + (done[l.id] ? ' done' : '') + '" href="lesson.html?l=' + l.id + '"><span class="ic">' + l.icon + '</span><span><div class="t">' + l.t + '</div><div class="dd">' + l.d + '</div></span></a>';
+  <div class="head">
+    <h1>🐟 MiroFish <span class="em">PRO</span></h1>
+    <div class="lead">Conviértete en quien sabe <b>ensayar lo que harán los demás</b>: domina la <b>simulación de actores</b> al estilo MiroFish, hecha dentro de <b>Claude Code</b> con subagentes. Aprende a armar el <b>dossier común</b>, diseñar <b>actores creíbles</b> con información privada, escribir la <b>consigna de cada ronda</b>, resolver <b>quién se entera de qué</b> con la vista de dios, leer las <b>brechas de percepción</b> y entregar un informe honesto. <b>No predices lo que harán los demás: lo ensayas, con lo que cada uno sabe, y miras dónde se rompe.</b> Con herramientas propias, plantillas, fichas de memoria, autoevaluación y <b>audio en todo</b>. Funciona sin internet.</div>
+    <div class="chips">
+      <span class="chip">🎭 Actores con información privada</span>
+      <span class="chip">🔊 Audio en todo</span>
+      <span class="chip">🧪 Autoevaluación por lección</span>
+      <span class="chip">🧰 7 herramientas</span>
+      <span class="chip">📡 Sin internet</span>
+      <span class="chip" id="chip-count">📚 lecciones</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="pfill"></div></div>
+      <div class="progress-txt" id="ptxt">Tu progreso</div>
+    </div>
+  </div>
+
+  <nav class="toolbar" id="tools" aria-label="Herramientas"></nav>
+
+  <div class="search"><input id="q" type="search" placeholder="🔎 Buscar tema (dossier, actor, ronda, consigna, visibilidad, brecha, informe, rama…)"></div>
+
+  <nav class="toc" id="toc" aria-label="Indice de areas"></nav>
+
+  <div id="home"></div>
+
+  <div class="foot">
+    🎧 <b>Cómo usarla:</b> estudia cada área en orden, toca <b>Escuchar lección completa</b> y repasa con audio camino a la obra. Cada lección trae ejemplos con una obra ficticia, puntos clave, fichas y un quiz.<br>
+    🧭 <b>Orden recomendado:</b> qué es MiroFish → Claude Code como motor → la semilla (dossier) → actores → consignas → resolución «vista de dios» → una corrida completa → leer lo que salió → informe y entrevistas → casos de obra → más allá de la obra → rigor y límites → combinar con tus herramientas → el simulador destacado.<br>
+    🛠️ <b>Herramientas:</b> armador de perfiles, generador de consignas, tablero de visibilidad, graficador de indicadores, checklists, plantillas y glosario.<br>
+    ⚠️ Esta app es formativa: <b>ensayo, no profecía</b>. Los casos son ficticios (Municipalidad Distrital de Villa Esperanza, Consorcio Andino, Consorcio Supervisor Horizonte). Las normas se citan solo por su nombre: verificar la norma vigente y el expediente técnico aprobado. Nada de lo que sale de una simulación garantiza el resultado de una valorización, un adicional, una ampliación de plazo, un arbitraje o el control. Los datos de MiroFish y de Claude Code cambian rápido: verificar en la documentación vigente.<br>
+    MiroFish PRO v1.0 · Ensayar el futuro sin engañarte.
+  </div>
+
+  <script src="assets/catalog.js"></script>
+  <script src="assets/engine.js"></script>
+  <script>
+    (function () {
+      var TOOLS = [
+        { h: 'herramientas.html', t: '🧰 Herramientas' },
+        { h: 'perfil.html', t: '🎭 Perfiles' },
+        { h: 'consigna.html', t: '✍️ Consignas' },
+        { h: 'visibilidad.html', t: '⚖️ Visibilidad' },
+        { h: 'indicadores.html', t: '📊 Indicadores' },
+        { h: 'checklist.html', t: '✅ Checklist' },
+        { h: 'plantillas.html', t: '📄 Plantillas' },
+        { h: 'glosario.html', t: '📖 Glosario' }
+      ];
+      var tb = document.getElementById('tools');
+      TOOLS.forEach(function (x) {
+        var a = document.createElement('a');
+        a.href = x.h; a.textContent = x.t;
+        tb.appendChild(a);
       });
-      h += '</section>';
-    });
-    list.innerHTML = h || '<p class="lead">Sin resultados.</p>';
-  }
-  toc.innerHTML = CATALOG.map(function (a, i) { return '<a href="#ar' + i + '">' + a.icon + ' ' + (i + 1) + '</a>'; }).join('');
-  render('');
-  document.getElementById('q').oninput = function () { render(this.value); };
-})();
-</script></body></html>
+
+      var home = document.getElementById('home');
+      var toc = document.getElementById('toc');
+      var total = 0;
+      CATALOG.forEach(function (a) { total += a.lessons.length; });
+      document.getElementById('chip-count').textContent = '📚 ' + total + ' lecciones';
+
+      var read = Store.get('read', {});
+      var nread = Object.keys(read).filter(function (k) { return read[k]; }).length;
+      var pc = total ? Math.round(nread / total * 100) : 0;
+      document.getElementById('pfill').style.width = pc + '%';
+      document.getElementById('ptxt').textContent = 'Tu progreso · ' + nread + ' de ' + total + ' lecciones (' + pc + '%)';
+
+      CATALOG.forEach(function (a, ai) {
+        var tlink = document.createElement('a');
+        tlink.href = '#area-' + ai;
+        tlink.textContent = a.icon + ' ' + a.area;
+        toc.appendChild(tlink);
+        var sec = document.createElement('div');
+        sec.className = 'section';
+        sec.id = 'area-' + ai;
+        sec.innerHTML = '<div class="t">' + a.icon + ' ' + a.area + '</div><div class="sdesc">' + a.desc + '</div>';
+        home.appendChild(sec);
+
+        var grid = document.createElement('div');
+        grid.className = 'grid';
+        a.lessons.forEach(function (l) {
+          var done = read[l.id];
+          var card = document.createElement('a');
+          card.className = 'card';
+          card.href = 'lesson.html?l=' + l.id;
+          card.style.setProperty('--acc', 'var(--' + a.acc + ')');
+          card.innerHTML =
+            '<div class="ico">' + l.icon + '</div>' +
+            (done ? '<span class="done">✓ leída</span>' : '') +
+            '<div class="ct">' + l.t + '</div>' +
+            '<div class="cd">' + l.d + '</div>' +
+            '<div class="go">Aprender →</div>';
+          grid.appendChild(card);
+        });
+        home.appendChild(grid);
+      });
+
+      var q = document.getElementById('q');
+      q.addEventListener('input', function () {
+        var s = q.value.toLowerCase().trim();
+        toc.style.display = s ? 'none' : '';
+        document.querySelectorAll('a.card').forEach(function (c) {
+          c.style.display = (!s || c.textContent.toLowerCase().indexOf(s) >= 0) ? '' : 'none';
+        });
+        document.querySelectorAll('.section').forEach(function (sec) {
+          var grid = sec.nextElementSibling;
+          var any = [].some.call(grid.querySelectorAll('a.card'), function (c) { return c.style.display !== 'none'; });
+          sec.style.display = any ? '' : 'none';
+          grid.style.display = any ? '' : 'none';
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
